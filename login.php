@@ -3,7 +3,7 @@ session_start();
 require 'koneksi.php';
 
 if (isset($_POST['login'])) {
-    $email    = mysqli_real_escape_string($conn, $_POST['email']);
+    $email = mysqli_real_escape_string($conn, $_POST['email']);
     $password = $_POST['password'];
 
     $query = mysqli_query($conn, "SELECT * FROM users WHERE email='$email'");
@@ -12,8 +12,15 @@ if (isset($_POST['login'])) {
         $user = mysqli_fetch_assoc($query);
 
         if (password_verify($password, $user['password'])) {
+            // Store user info in session
             $_SESSION['user'] = $user;
-            header("Location: index.php");
+
+            // Check user role and redirect accordingly
+            if ($user['role'] === 'admin') {
+                header("Location: admin.php");
+            } else {
+                header("Location: index.php");
+            }
             exit;
         } else {
             $error = "Password salah!";

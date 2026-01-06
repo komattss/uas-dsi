@@ -6,13 +6,14 @@ if (isset($_POST['register'])) {
     $username = mysqli_real_escape_string($conn, $_POST['username']);
     $email    = mysqli_real_escape_string($conn, $_POST['email']);
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+    $role     = mysqli_real_escape_string($conn, $_POST['role']); // Get role
 
     $check = mysqli_query($conn, "SELECT * FROM users WHERE email='$email'");
     if (mysqli_num_rows($check) > 0) {
         $error = "Email sudah terdaftar!";
     } else {
-        $insert = mysqli_query($conn, "INSERT INTO users (username, email, password) 
-                                       VALUES('$username', '$email', '$password')");
+        $insert = mysqli_query($conn, "INSERT INTO users (username, email, password, role) 
+                                       VALUES('$username', '$email', '$password', '$role')");
         if ($insert) {
             header("Location: login.php?registered=1");
             exit;
@@ -102,7 +103,8 @@ if (isset($_POST['register'])) {
             margin-bottom: 8px;
         }
 
-        .input-group input {
+        .input-group input,
+        .input-group select {
             width: 100%;
             padding: 12px 15px;
             border: 2px solid #e0e0e0;
@@ -112,7 +114,8 @@ if (isset($_POST['register'])) {
             font-family: "Poppins", sans-serif;
         }
 
-        .input-group input:focus {
+        .input-group input:focus,
+        .input-group select:focus {
             border-color: #8B4513;
             outline: none;
             box-shadow: 0 0 8px rgba(139, 69, 19, 0.2);
@@ -246,6 +249,17 @@ if (isset($_POST['register'])) {
             <div class="password-strength">
                 <div class="strength-bar" id="strengthBar"></div>
             </div>
+        </div>
+
+        <!-- Role Selection -->
+        <div class="input-group">
+            <label for="role">
+                <i class="fas fa-user-shield" style="color: #8B4513; margin-right: 5px;"></i> Role
+            </label>
+            <select id="role" name="role" required>
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+            </select>
         </div>
 
         <button type="submit" name="register" class="btn-register">
